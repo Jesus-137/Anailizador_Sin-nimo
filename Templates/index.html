@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analizador léxico web</title>
+    <style>
+        .input-area {
+            width: 100%;
+            height: 200px;
+            background-color: navy;
+            color: white;
+            padding: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Analizador léxico web</h1>
+    <p>Crear un analizador léxico que permita reemplazar palabras de diccionario de sinónimos; en caso de no encontrar dejar la palabra original, por lo menos de contar con 50 sinónimos.</p>
+    
+    <textarea id="texto" class="input-area" placeholder="Ingrese el texto aquí..."></textarea>
+    <br>
+    <button onclick="analizarTexto()">Analizar</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Cadena de entrada</th>
+                <th>Cadena resultante</th>
+                <th>Palabras cambiadas</th>
+                <th>Números</th>
+                <th>Símbolos</th>
+                <th>Línea</th>
+            </tr>
+        </thead>
+        <tbody id="resultados">
+        </tbody>
+    </table>
+
+    <script>
+        async function analizarTexto() {
+            const texto = document.getElementById('texto').value;
+            const response = await fetch('/analizar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ texto }),
+            });
+            const resultados = await response.json();
+            const resultadosTable = document.getElementById('resultados');
+            resultadosTable.innerHTML = '';
+            resultados.forEach(resultado => {
+                const row = `<tr>
+                    <td>${resultado.entrada}</td>
+                    <td>${resultado.resultado}</td>
+                    <td>${resultado.palabras_cambiadas}</td>
+                    <td>${resultado.numeros}</td>
+                    <td>${resultado.simbolos}</td>
+                    <td>${resultado.linea}</td>
+                </tr>`;
+                resultadosTable.innerHTML += row;
+            });
+        }
+    </script>
+</body>
+</html>
